@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr">
+<head th:replace="~{fragments/layout :: head('Planlanan Mesajlar')}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Navbar -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <!-- Main Content -->
+    <div class="container flex-grow-1">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Planlanan Mesajlar</h4>
+                <a th:href="@{/messages/send}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Yeni Mesaj Planla
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Alıcı</th>
+                                <th>Mesaj</th>
+                                <th>Adet</th>
+                                <th>Planlanan Zaman</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="message : ${messages}">
+                                <td>
+                                    <strong th:text="${message.recipientName}">Alıcı</strong>
+                                    <div class="text-muted small" th:text="${message.recipientId}">ID</div>
+                                </td>
+                                <td>
+                                    <div class="text-truncate" style="max-width: 200px;" th:text="${message.message}">Mesaj</div>
+                                </td>
+                                <td th:text="${message.messageCount}">1</td>
+                                <td>
+                                    <div th:text="${#temporals.format(message.scheduledTime, 'dd.MM.yyyy HH:mm')}">Zaman</div>
+                                    <small class="text-muted" 
+                                           th:text="${'Oluşturulma: ' + #temporals.format(message.createdAt, 'dd.MM.yyyy HH:mm')}">
+                                        Oluşturulma
+                                    </small>
+                                </td>
+                                <td th:id="'status-' + ${message.id}">
+                                    <span th:if="${message.sent}" class="badge bg-success">
+                                        <i class="bi bi-check2-all"></i> Gönderildi
+                                    </span>
+                                    <span th:unless="${message.sent}" class="badge bg-warning">
+                                        <i class="bi bi-clock"></i> Bekliyor
+                                    </span>
+                                </td>
+                                <td>
+                                    <form th:action="@{/scheduled-messages/{id}(id=${message.id})}" 
+                                          method="post" 
+                                          style="display: inline;"
+                                          th:id="'delete-form-' + ${message.id}"
+                                          onsubmit="return confirm('Bu mesajı silmek istediğinizden emin misiniz?');">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                th:id="'delete-button-' + ${message.id}"
+                                                th:disabled="${message.sent}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(messages)}">
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox h4 d-block"></i>
+                                    Henüz planlanmış mesaj bulunmuyor
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refresh Indicator -->
+    <div class="refresh-indicator" id="refreshIndicator">
+        <i class="bi bi-arrow-repeat spin"></i> Güncelleniyor...
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const refreshIndicator = document.getElementById('refreshIndicator');
+            
+            function updateStatuses() {
+                refreshIndicator.style.display = 'block';
+                document.querySelector('.table').classList.add('loading');
+                
+                fetch('/api/scheduled-messages/status')
+                    .then(response => response.json())
+                    .then(messages => {
+                        messages.forEach(message => {
+                            const statusCell = document.querySelector(`#status-${message.id}`);
+                            if (statusCell) {
+                                if (message.sent) {
+                                    statusCell.innerHTML = `
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check2-all"></i> Gönderildi
+                                        </span>`;
+                                    
+                                    const deleteButton = document.querySelector(`#delete-button-${message.id}`);
+                                    if (deleteButton) {
+                                        deleteButton.disabled = true;
+                                    }
+                                } else {
+                                    statusCell.innerHTML = `
+                                        <span class="badge bg-warning">
+                                            <i class="bi bi-clock"></i> Bekliyor
+                                        </span>`;
+                                    
+                                    const deleteButton = document.querySelector(`#delete-button-${message.id}`);
+                                    if (deleteButton) {
+                                        deleteButton.disabled = false;
+                                    }
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Durum güncellenirken hata:', error))
+                    .finally(() => {
+                        refreshIndicator.style.display = 'none';
+                        document.querySelector('.table').classList.remove('loading');
+                    });
+            }
+
+            setInterval(updateStatuses, 10000);
+            updateStatuses();
+        });
+    </script>
+</body>
+</html> 

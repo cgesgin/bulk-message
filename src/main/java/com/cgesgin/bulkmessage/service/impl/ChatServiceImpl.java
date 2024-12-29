@@ -2,6 +2,7 @@ package com.cgesgin.bulkmessage.service.impl;
 
 import org.springframework.stereotype.Service;
 
+
 import com.cgesgin.bulkmessage.api.whatsapp.Chatting;
 import com.cgesgin.bulkmessage.model.SendText;
 import com.cgesgin.bulkmessage.service.ChatService;
@@ -43,4 +44,5 @@ public class ChatServiceImpl implements ChatService {
         
         return cleanNumber + "@c.us";
     }
+
 } 
