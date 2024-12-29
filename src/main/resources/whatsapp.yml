@@ -1,0 +1,3 @@
+whatsapp:
+  service:
+    url: ${WHATSAPP_SERVICE_URL:http://localhost:3000} 

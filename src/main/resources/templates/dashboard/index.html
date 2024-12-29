@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>WhatsApp Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+    <style>
+        .dashboard-container {
+            width: 100%;
+            height: calc(100vh - 56px);
+            position: relative;
+        }
+        .dashboard-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body> 
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-0">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">WhatsApp Yönetimi</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/messages/send}">Mesaj Gönder</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard iframe -->
+    <div class="dashboard-container">
+        <iframe id="dashboardFrame"
+                th:src="${dashboardUrl}" 
+                class="dashboard-frame"
+                title="WhatsApp Dashboard">
+        </iframe>
+    </div>
+
+    <!-- Error container -->
+    <div id="errorContainer" style="display: none;" class="container mt-3">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div>Dashboard yüklenirken bir hata oluştu.</div>
+        </div>
+        <div class="text-center mt-3">
+            <button type="button" class="btn btn-primary" onclick="retryLoading()">
+                <i class="bi bi-arrow-clockwise"></i> Yeniden Dene
+            </button>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script th:inline="javascript">
+        const dashboardUrl = /*[[${dashboardUrl}]]*/ '';
+        
+        function showError() {
+            document.getElementById('dashboardFrame').style.display = 'none';
+            document.getElementById('errorContainer').style.display = 'block';
+        }
+
+        function retryLoading() {
+            const frame = document.getElementById('dashboardFrame');
+            frame.style.display = 'block';
+            document.getElementById('errorContainer').style.display = 'none';
+            frame.src = dashboardUrl;
+        }
+
+        // Sayfa yüklendiğinde URL'in erişilebilir olup olmadığını kontrol et
+        window.addEventListener('load', function() {
+            fetch(dashboardUrl, { method: 'HEAD' })
+                .catch(() => {
+                    showError();
+                });
+        });
+    </script>
+</body>
+</html> 

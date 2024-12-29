@@ -1,0 +1,120 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.table th {
+    background-color: #f8f9fa;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.btn-primary {
+    background-color: #25D366;
+    border-color: #25D366;
+}
+
+.btn-primary:hover {
+    background-color: #128C7E;
+    border-color: #128C7E;
+}
+
+.card {
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.btn-group .btn {
+    margin-right: 4px;
+}
+
+.badge {
+    padding: 8px 12px;
+}
+
+.btn-success {
+    background-color: #25D366;
+    border-color: #25D366;
+}
+
+.btn-success:hover {
+    background-color: #128C7E;
+    border-color: #128C7E;
+}
+
+.spinner-border {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+.placeholder-glow .placeholder {
+    animation: placeholder-glow 2s ease-in-out infinite;
+}
+
+@keyframes placeholder-glow {
+    50% {
+        opacity: 0.2;
+    }
+}
+
+.status-transition {
+    transition: all 0.3s ease-in-out;
+}
+
+/* STARTING durumu için özel stil */
+.status-starting {
+    color: #ffc107;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* STOPPING durumu için özel stil */
+.status-stopping {
+    color: #dc3545;
+    animation: pulse 1.5s infinite;
+}
+
+/* Spinner renkleri için gradient animasyon */
+.spinner-border.text-warning {
+    border-color: #ffc107;
+    border-right-color: transparent;
+}
+
+.spinner-border.text-danger {
+    border-color: #dc3545;
+    border-right-color: transparent;
+}
+
+/* Geçiş animasyonlarını yumuşatma */
+.status-transition {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Placeholder animasyonunu özelleştirme */
+.placeholder {
+    background-color: rgba(0,0,0,.1);
+    border-radius: 4px;
+}
+
+.placeholder-glow .placeholder {
+    animation: placeholder-glow 2s ease-in-out infinite;
+}
+
+@keyframes placeholder-glow {
+    50% {
+        opacity: 0.2;
+    }
+} 
